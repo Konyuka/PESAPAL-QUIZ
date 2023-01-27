@@ -33,122 +33,182 @@ const assembler = (textProgram) => {
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "lw"){
-      // since we have two items in the instructionItems array we identify what we need by index
+      // since we have items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x03 << 12) | (register1 << 8) | (register2 << 4);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "sw"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x04 << 12) | (register1 << 8) | (register2 << 4);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "add"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
       let register3 = instructionItems[3];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x05 << 12) | (register1 << 8) | (register2 << 4 | register3);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "sub"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
       let register3 = instructionItems[3];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x06 << 12) | (register1 << 8) | (register2 << 4 | register3);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "mult"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
       let register3 = instructionItems[3];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x07 << 12) | (register1 << 8) | (register2 << 4 | register3);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "div"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
       let register3 = instructionItems[3];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x08 << 12) | (register1 << 8) | (register2 << 4 | register3);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "j"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let memoryLocation = instructionItems[1];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x09 << 12) | (memoryLocation & 0xFFF);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "jr"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x0A << 12) | (register1 & 0xFFF);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "beq"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
       let register2 = instructionItems[2];
       let register3 = instructionItems[3];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x0B << 12) | (register1 << 8) | (register2 << 4) | register3;
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "bne"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[0];
       let register2 = instructionItems[1];
       let register3 = instructionItems[2];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x0C << 12) | (register1 << 8) | (register2 << 4) | register3;
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "inc"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x0A << 12) | (register1 & 0xFFF);
       machineCodes.push(uniqueValue);
     }
     else if (operationCode === "dec"){
-      // since we have two items in the instructionItems array we identify what we need by index
       let register1 = instructionItems[1];
 
-      // shift 0x02 left by 12bits, register left by 8bits then combine the result of value AND 0xFF
       let uniqueValue = (0x0A << 12) | (register1 & 0xFFF);
       machineCodes.push(uniqueValue);
     }
   }
 
 
+  // pass result to the simulator
+  simulator(machineCode)
+
+}
+
+
+
+
+
+const simulator = (machineCode) => {
+
+  // up to 65536 16-bit integers in memory
+  var memory = new Uint16Array(0x0000FFFF + 1);
+  var registers = new Uint32Array(5);
+
+  var PC = 0x0000CFFF;
+
+
+  // parse code into machine code
+  const machineCode = parseCode(machineCode);
+
+
+  while (true) {
+    const instruction = machineCode[PC];
+    PC++;  // increment PC after fetching instruction
+
+    switch (instruction.opcode) {
+      case 0x00: // halt
+        console.log("Program terminated.");
+        return;
+      case 0x01: // nop
+        // do nothing
+        break;
+      case 0x02: // li
+        registers[instruction.reg1] = instruction.immediate;
+        break;
+      case 0x03: // lw
+        registers[instruction.reg1] = memory[registers[instruction.reg2]];
+        break;
+      case 0x04: // sw
+        memory[registers[instruction.reg1]] = registers[instruction.reg2];
+        break;
+      case 0x05: // add
+        registers[instruction.reg3] = registers[instruction.reg1] + registers[instruction.reg2];
+        break;
+      case 0x06: // sub
+        registers[instruction.reg3] = registers[instruction.reg1] - registers[instruction.reg2];
+        break;
+      case 0x07: // mult
+        registers[instruction.reg3] = registers[instruction.reg1] * registers[instruction.reg2];
+        break;
+      case 0x08: // div
+        registers[instruction.reg3] = registers[instruction.reg1] / registers[instruction.reg2];
+        break;
+      case 0x09: // j
+        PC = instruction.immediate;
+        break;
+      case 0x0A: // jr
+        PC = registers[instruction.reg1];
+        break;
+      case 0x0B: // beq
+        if (registers[instruction.reg1] === registers[instruction.reg2]) {
+          PC = registers[instruction.reg3];
+        }
+        break;
+      case 0x0C: // bne
+        if (registers[instruction.reg1] !== registers[instruction.reg2]) {
+          PC = registers[instruction.reg3];
+        }
+        break;
+      case 0x0D: // inc
+        registers[instruction.reg1]++;
+        break;
+      case 0x0E: // dec
+        registers[instruction.reg1]--;
+        break;
+      default:
+        console.log("Invalid instruction.");
+        return;
+    }
+    console.log("Registers:", registers);  // log register values after each cycle
+  }
 
 
 
 }
+
 </script>
 
 <template>
