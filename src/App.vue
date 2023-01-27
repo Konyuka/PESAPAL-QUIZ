@@ -1,6 +1,6 @@
 <script setup>
 
-// the assebler function
+// Start of Problem 0
 const assembler = (textProgram) => {
   // later to be used to store computed codes 
   let machineCodes = []  
@@ -127,10 +127,6 @@ const assembler = (textProgram) => {
 
 }
 
-
-
-
-
 const simulator = (machineCode) => {
 
   // up to 65536 16-bit integers in memory
@@ -208,6 +204,12 @@ const simulator = (machineCode) => {
 
 
 }
+// End of Problem 0
+
+
+// Start of Problem 1
+
+// End of problem 1
 
 </script>
 
