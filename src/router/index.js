@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      // component: () => import('../components/RenderPages.vue'),
+      // component: () => import('../components/RenderPages.vue'), dont lazy load
       component: RenderComponent,
       props: { source: "../../pages/home.md" }
     },
@@ -25,5 +25,14 @@ const router = createRouter({
     }
   ]
 })
+
+// catch undefined routes
+router.beforeEach((to, from, next) => {
+  if (!to.matched.length) {
+    next({ name: 'error' });
+  } else {
+    next();
+  }
+});
 
 export default router
