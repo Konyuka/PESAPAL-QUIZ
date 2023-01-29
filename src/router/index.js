@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import RenderComponent from '../components/RenderPages.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,17 +7,32 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      // component: () => import('../components/RenderPages.vue'), dont lazy load
+      component: RenderComponent,
+      props: { source: "../../pages/home.md" }
     },
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      component: RenderComponent,
+      props: { source: "../../pages/about.md" }
+    },
+    {
+      path: '/*',
+      name: 'error',
+      component: () => import('../components/RenderPages.vue'),
+      props: { source: "../../pages/error.md" }
     }
   ]
 })
+
+// catch undefined routes
+router.beforeEach((to, from, next) => {
+  if (!to.matched.length) {
+    next({ name: 'error' });
+  } else {
+    next();
+  }
+});
 
 export default router
