@@ -1,6 +1,6 @@
 # pesapal challenge
 
-I managed to work on three of the 5 projects namely problem 0, 1 & 4
+I managed to work on 3 of the 5 problems namely problem 0, 1 & 4
 Each problem has been solved on corresponding branches in this repository. 
 Light documentation of code has also been done.
 
