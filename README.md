@@ -1,6 +1,9 @@
 # pesapal
 
-This template should help get you started developing with Vue 3 in Vite.
+Problem Solution has been done on the below files
+src/components/RenderPages.vue
+src/router/index.js
+
 
 ## Recommended IDE Setup
 
